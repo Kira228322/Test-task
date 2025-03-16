@@ -1,0 +1,62 @@
+{
+    "name": "GameInput",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "87661840-a2b7-4437-81e3-fab32aac5712",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "7057116c-518d-4c04-a4a9-28e851b5833a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "884106c2-c65c-4187-a722-62d63b8833a6",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Building",
+            "id": "3d599512-1a96-4170-aee8-fc54e95ea652",
+            "actions": [
+                {
+                    "name": "Build",
+                    "type": "Button",
+                    "id": "709369c1-312c-4d48-a7e5-bbeed8690b6f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1116bece-0389-4d98-88b5-6d0c7afe8f20",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Build",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

@@ -9,7 +9,7 @@ public class Building : MonoBehaviour
     [SerializeField] private Renderer _renderer;
     private Color _defaultColor;
 
-    private void Start()
+    private void Awake()
     {
         _defaultColor = _renderer.material.color;
     }
@@ -20,6 +20,11 @@ public class Building : MonoBehaviour
             _renderer.material.color = Color.green;
         else 
             _renderer.material.color = Color.red;
+    }
+
+    public void ChangeColorOnSelectToDelete()
+    {
+        _renderer.material.color = Color.red;
     }
 
     public void SetColorToDefault()

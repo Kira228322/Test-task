@@ -2,22 +2,61 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FloorGrid : MonoBehaviour
 {
     [SerializeField] private Vector2Int _gridSize;
     [SerializeField] private Camera _camera;
+    [SerializeField] private Material _cellsGrid;
+    [SerializeField] private Renderer _floorRenderer;
+    private Texture _baseFloorMaterialTexture;
+    private Vector2 _baseFloorMaterialTextureScale;
     private Building _floatingBuilding;
     private Plane _buildingPlane;
     private Building[,] _buildings;
+    private GameInput _gameInput;
     
-    private void Start()
+    private void Awake()
     {
-        _buildings = new Building[_gridSize.x, _gridSize.y];
-        _buildingPlane = new Plane(Vector3.up, gameObject.transform.position);
+        _gameInput = new GameInput();
+        _gameInput.Enable();
+        
+        Init();
         enabled = false;
     }
 
+    private void OnEnable()
+    {
+        _gameInput.Building.Build.performed += OnBuildPerform;
+    }
+
+    private void OnDisable()
+    {
+        _gameInput.Building.Build.performed -= OnBuildPerform;
+    }
+
+    private void Init()
+    {
+        _baseFloorMaterialTexture = _floorRenderer.material.mainTexture;
+        _baseFloorMaterialTextureScale = _floorRenderer.material.mainTextureScale;
+        
+        _buildings = new Building[_gridSize.x, _gridSize.y];
+        _buildingPlane = new Plane(Vector3.up, gameObject.transform.position);
+    }
+
+    private void SwitchFloorTextureToGrid()
+    {
+        _floorRenderer.material.mainTexture = _cellsGrid.mainTexture;
+        _floorRenderer.material.mainTextureScale = _gridSize / 2;
+    }
+
+    private void SwitchFloorTextureToDefault()
+    {
+        _floorRenderer.material.mainTexture = _baseFloorMaterialTexture;
+        _floorRenderer.material.mainTextureScale =_baseFloorMaterialTextureScale;
+    }
+    
     private void CreateFloatingBuilding(Building building)
     {
         if (_floatingBuilding != null)
@@ -26,9 +65,10 @@ public class FloorGrid : MonoBehaviour
         _floatingBuilding = Instantiate(building);
     }
 
-    public void OnBuildingButtonClick(Building building)
+    public void OnPlaceButtonClick()
     {
-        CreateFloatingBuilding(building);
+        CreateFloatingBuilding(BuldingShopManager.Instance._chosenBuilding);
+        SwitchFloorTextureToGrid();
         enabled = true;
     }
 
@@ -44,12 +84,17 @@ public class FloorGrid : MonoBehaviour
             worldPosition.z = Mathf.Floor(worldPosition.z);
             
             _floatingBuilding.transform.position = worldPosition ;
-            
-            if (PlaceIsAvailable(worldPosition) && Input.GetKeyUp(KeyCode.Mouse0))
-            {
-                PlaceBuilding(worldPosition);
-                enabled = false;
-            }
+
+            CheckAvailable();
+        }
+    }
+
+    private void OnBuildPerform(InputAction.CallbackContext obj)
+    {
+        if (CheckAvailable())
+        {
+            PlaceBuilding(_floatingBuilding.transform.position);
+            enabled = false;
         }
     }
 
@@ -57,6 +102,7 @@ public class FloorGrid : MonoBehaviour
     {
         int pivotX = WorldToGrid(worldPosition).x;
         int pivotY = WorldToGrid(worldPosition).y;
+        
         for (int x = pivotX; x < pivotX + _floatingBuilding.Size.x; x++)
         {
             for (int y = pivotY; y < pivotY + _floatingBuilding.Size.y; y++)
@@ -64,22 +110,25 @@ public class FloorGrid : MonoBehaviour
                 _buildings[x, y] = _floatingBuilding;
             }
         }
+        
         _floatingBuilding.SetColorToDefault();
+        SwitchFloorTextureToDefault();
         _floatingBuilding = null;
     }
     
-    private bool PlaceIsAvailable(Vector3 worldPosition)
+    private bool CheckAvailable()
     {
         _floatingBuilding.ChangeColorWhileDragging(false);
-        if (worldPosition.x < transform.position.x ||
-            worldPosition.x + _floatingBuilding.Size.x >= transform.position.x + _gridSize.x)
+        Vector3 pos = _floatingBuilding.transform.position;
+        if (pos.x < transform.position.x ||
+            pos.x + _floatingBuilding.Size.x >= transform.position.x + _gridSize.x)
             return false;
-        if (worldPosition.z < transform.position.z ||
-                 worldPosition.z + _floatingBuilding.Size.y >= transform.position.z + _gridSize.y)
+        if (pos.z < transform.position.z ||
+            pos.z + _floatingBuilding.Size.y >= transform.position.z + _gridSize.y)
             return false;
         
-        int pivotX = WorldToGrid(worldPosition).x;
-        int pivotY = WorldToGrid(worldPosition).y;
+        int pivotX = WorldToGrid(pos).x;
+        int pivotY = WorldToGrid(pos).y;
         for (int x = pivotX; x < pivotX + _floatingBuilding.Size.x; x++)
         {
             for (int y = pivotY; y < pivotY + _floatingBuilding.Size.y; y++)
