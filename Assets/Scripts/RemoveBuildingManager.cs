@@ -1,40 +1,84 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 public class RemoveBuildingManager : MonoBehaviour
 {
+    public static RemoveBuildingManager Instance;
     [SerializeField] private Camera _camera;
-    private Building _selectedBuilding;
-
-    public Building SelectedBuilding
+    [SerializeField] private TMP_Text _removeButtonText;
+    private GameInput _gameInput;
+    public event UnityAction OnBuildingRemoving;
+    private Building _previousSelectedBuilding;
+    public Building SelectedBuilding;
+    
+    private void Awake()
     {
-        get
+        if (Instance == null)
+            Instance = this;
+        
+        _gameInput = new GameInput();
+        
+        SwitchEnabledRemoveMode();
+    }
+
+    private void OnEnable()
+    {
+        _gameInput.DeleteMode.Delete.performed += RemoveBuilding;
+    }
+
+    private void OnDisable()
+    {
+        _gameInput.DeleteMode.Delete.performed -= RemoveBuilding;
+    }
+
+    public void SwitchEnabledRemoveMode()
+    {
+        if (!enabled)
         {
-            return _selectedBuilding;
+            enabled = true;
+            _gameInput.Enable();
+            _removeButtonText.text = "Cancel";
         }
-        set
+        else
         {
-            if (_selectedBuilding != null)
-                if (value != _selectedBuilding)
-                {
-                    _selectedBuilding.SetColorToDefault();
-                }
-            _selectedBuilding = value;
+            enabled = false;
+            _gameInput.Disable();
+            _removeButtonText.text = "Remove";
         }
     }
+    
     
     void Update()
     {
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out var hit))
         {
+            _previousSelectedBuilding = SelectedBuilding;
             SelectedBuilding = hit.collider.GetComponentInParent<Building>();
-            Debug.Log(SelectedBuilding);
-            if (SelectedBuilding != null)
+            
+            if (_previousSelectedBuilding != SelectedBuilding)
             {
-                SelectedBuilding.ChangeColorOnSelectToDelete();
+                if (SelectedBuilding != null)
+                    SelectedBuilding.SelectingAnimation();
+                if (_previousSelectedBuilding != null)
+                    _previousSelectedBuilding.DeselectingAnimation();
             }
+            
+        }
+    }
+
+    private void RemoveBuilding(InputAction.CallbackContext obj)
+    {
+        if (SelectedBuilding != null)
+        {
+            OnBuildingRemoving?.Invoke();
+            Destroy(SelectedBuilding.gameObject);
+            SwitchEnabledRemoveMode();
         }
     }
 }

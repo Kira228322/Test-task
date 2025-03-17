@@ -24,11 +24,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     ""name"": ""GameInput"",
     ""maps"": [
         {
-            ""name"": ""Gameplay"",
+            ""name"": ""DeleteMode"",
             ""id"": ""87661840-a2b7-4437-81e3-fab32aac5712"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Delete"",
                     ""type"": ""Button"",
                     ""id"": ""7057116c-518d-4c04-a4a9-28e851b5833a"",
                     ""expectedControlType"": """",
@@ -41,11 +41,11 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""884106c2-c65c-4187-a722-62d63b8833a6"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Delete"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -82,9 +82,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     ],
     ""controlSchemes"": []
 }");
-        // Gameplay
-        m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_Newaction = m_Gameplay.FindAction("New action", throwIfNotFound: true);
+        // DeleteMode
+        m_DeleteMode = asset.FindActionMap("DeleteMode", throwIfNotFound: true);
+        m_DeleteMode_Delete = m_DeleteMode.FindAction("Delete", throwIfNotFound: true);
         // Building
         m_Building = asset.FindActionMap("Building", throwIfNotFound: true);
         m_Building_Build = m_Building.FindAction("Build", throwIfNotFound: true);
@@ -92,7 +92,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
 
     ~@GameInput()
     {
-        UnityEngine.Debug.Assert(!m_Gameplay.enabled, "This will cause a leak and performance issues, GameInput.Gameplay.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_DeleteMode.enabled, "This will cause a leak and performance issues, GameInput.DeleteMode.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Building.enabled, "This will cause a leak and performance issues, GameInput.Building.Disable() has not been called.");
     }
 
@@ -152,51 +152,51 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Gameplay
-    private readonly InputActionMap m_Gameplay;
-    private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
-    private readonly InputAction m_Gameplay_Newaction;
-    public struct GameplayActions
+    // DeleteMode
+    private readonly InputActionMap m_DeleteMode;
+    private List<IDeleteModeActions> m_DeleteModeActionsCallbackInterfaces = new List<IDeleteModeActions>();
+    private readonly InputAction m_DeleteMode_Delete;
+    public struct DeleteModeActions
     {
         private @GameInput m_Wrapper;
-        public GameplayActions(@GameInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_Gameplay_Newaction;
-        public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
+        public DeleteModeActions(@GameInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Delete => m_Wrapper.m_DeleteMode_Delete;
+        public InputActionMap Get() { return m_Wrapper.m_DeleteMode; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(GameplayActions set) { return set.Get(); }
-        public void AddCallbacks(IGameplayActions instance)
+        public static implicit operator InputActionMap(DeleteModeActions set) { return set.Get(); }
+        public void AddCallbacks(IDeleteModeActions instance)
         {
-            if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            if (instance == null || m_Wrapper.m_DeleteModeActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DeleteModeActionsCallbackInterfaces.Add(instance);
+            @Delete.started += instance.OnDelete;
+            @Delete.performed += instance.OnDelete;
+            @Delete.canceled += instance.OnDelete;
         }
 
-        private void UnregisterCallbacks(IGameplayActions instance)
+        private void UnregisterCallbacks(IDeleteModeActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @Delete.started -= instance.OnDelete;
+            @Delete.performed -= instance.OnDelete;
+            @Delete.canceled -= instance.OnDelete;
         }
 
-        public void RemoveCallbacks(IGameplayActions instance)
+        public void RemoveCallbacks(IDeleteModeActions instance)
         {
-            if (m_Wrapper.m_GameplayActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_DeleteModeActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(IGameplayActions instance)
+        public void SetCallbacks(IDeleteModeActions instance)
         {
-            foreach (var item in m_Wrapper.m_GameplayActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_DeleteModeActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_GameplayActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_DeleteModeActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public GameplayActions @Gameplay => new GameplayActions(this);
+    public DeleteModeActions @DeleteMode => new DeleteModeActions(this);
 
     // Building
     private readonly InputActionMap m_Building;
@@ -243,9 +243,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         }
     }
     public BuildingActions @Building => new BuildingActions(this);
-    public interface IGameplayActions
+    public interface IDeleteModeActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnDelete(InputAction.CallbackContext context);
     }
     public interface IBuildingActions
     {

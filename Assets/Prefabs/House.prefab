@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5527abf710eb36c438a936e4db3c2b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: {x: 2, y: 2}
+  SizeOnGrid: {x: 2, y: 2}
   _renderer: {fileID: 2770689750519409329}
 --- !u!1001 &2747655089082294653
 PrefabInstance:

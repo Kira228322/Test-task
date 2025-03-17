@@ -384,7 +384,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 240534846}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7b42900985c5c34e86d9eae34b4c678, type: 3}
   m_Name: 
@@ -597,7 +597,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 249383314}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1984594989}
+        m_TargetAssemblyTypeName: RemoveBuildingManager, Assembly-CSharp
+        m_MethodName: SwitchEnabledRemoveMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &249383314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1773,6 +1785,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 963194227}
+  _removeButtonText: {fileID: 725603706}
+  SelectedBuilding: {fileID: 0}
 --- !u!4 &1984594990
 Transform:
   m_ObjectHideFlags: 0

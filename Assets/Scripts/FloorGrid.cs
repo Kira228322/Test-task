@@ -23,17 +23,18 @@ public class FloorGrid : MonoBehaviour
         _gameInput.Enable();
         
         Init();
-        enabled = false;
     }
 
     private void OnEnable()
     {
         _gameInput.Building.Build.performed += OnBuildPerform;
+        RemoveBuildingManager.Instance.OnBuildingRemoving += OnBuildingRemoving;
     }
 
     private void OnDisable()
     {
         _gameInput.Building.Build.performed -= OnBuildPerform;
+        RemoveBuildingManager.Instance.OnBuildingRemoving -= OnBuildingRemoving;
     }
 
     private void Init()
@@ -45,6 +46,18 @@ public class FloorGrid : MonoBehaviour
         _buildingPlane = new Plane(Vector3.up, gameObject.transform.position);
     }
 
+    private void OnBuildingRemoving()
+    {
+        for (int i = 0; i < _buildings.GetLength(0); i++)
+        {
+            for (int j = 0; j < _buildings.GetLength(1); j++)
+            {
+                if (_buildings[i, j] == RemoveBuildingManager.Instance.SelectedBuilding)
+                    _buildings[i, j] = null;
+            }
+        }
+    }
+    
     private void SwitchFloorTextureToGrid()
     {
         _floorRenderer.material.mainTexture = _cellsGrid.mainTexture;
@@ -54,7 +67,7 @@ public class FloorGrid : MonoBehaviour
     private void SwitchFloorTextureToDefault()
     {
         _floorRenderer.material.mainTexture = _baseFloorMaterialTexture;
-        _floorRenderer.material.mainTextureScale =_baseFloorMaterialTextureScale;
+        _floorRenderer.material.mainTextureScale = _baseFloorMaterialTextureScale;
     }
     
     private void CreateFloatingBuilding(Building building)
@@ -103,9 +116,9 @@ public class FloorGrid : MonoBehaviour
         int pivotX = WorldToGrid(worldPosition).x;
         int pivotY = WorldToGrid(worldPosition).y;
         
-        for (int x = pivotX; x < pivotX + _floatingBuilding.Size.x; x++)
+        for (int x = pivotX; x < pivotX + _floatingBuilding.SizeOnGrid.x; x++)
         {
-            for (int y = pivotY; y < pivotY + _floatingBuilding.Size.y; y++)
+            for (int y = pivotY; y < pivotY + _floatingBuilding.SizeOnGrid.y; y++)
             {
                 _buildings[x, y] = _floatingBuilding;
             }
@@ -121,17 +134,17 @@ public class FloorGrid : MonoBehaviour
         _floatingBuilding.ChangeColorWhileDragging(false);
         Vector3 pos = _floatingBuilding.transform.position;
         if (pos.x < transform.position.x ||
-            pos.x + _floatingBuilding.Size.x >= transform.position.x + _gridSize.x)
+            pos.x + _floatingBuilding.SizeOnGrid.x >= transform.position.x + _gridSize.x)
             return false;
         if (pos.z < transform.position.z ||
-            pos.z + _floatingBuilding.Size.y >= transform.position.z + _gridSize.y)
+            pos.z + _floatingBuilding.SizeOnGrid.y >= transform.position.z + _gridSize.y)
             return false;
         
         int pivotX = WorldToGrid(pos).x;
         int pivotY = WorldToGrid(pos).y;
-        for (int x = pivotX; x < pivotX + _floatingBuilding.Size.x; x++)
+        for (int x = pivotX; x < pivotX + _floatingBuilding.SizeOnGrid.x; x++)
         {
-            for (int y = pivotY; y < pivotY + _floatingBuilding.Size.y; y++)
+            for (int y = pivotY; y < pivotY + _floatingBuilding.SizeOnGrid.y; y++)
             {
                 if (_buildings[x, y] != null)
                 {
