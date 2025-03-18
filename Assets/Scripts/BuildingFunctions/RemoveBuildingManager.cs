@@ -9,21 +9,24 @@ using UnityEngine.InputSystem;
 public class RemoveBuildingManager : MonoBehaviour
 {
     public static RemoveBuildingManager Instance;
+    [HideInInspector]public Building SelectedBuilding;
     [SerializeField] private Camera _camera;
     [SerializeField] private TMP_Text _removeButtonText;
     private GameInput _gameInput;
-    public event UnityAction OnBuildingRemoving;
     private Building _previousSelectedBuilding;
-    public Building SelectedBuilding;
+    public event UnityAction OnBuildingRemoving;
     
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        
         _gameInput = new GameInput();
         
         SwitchEnabledRemoveMode();
+    }
+
+    public void Init()
+    {
+        if (Instance == null)
+            Instance = this;
     }
 
     private void OnEnable()
@@ -38,17 +41,21 @@ public class RemoveBuildingManager : MonoBehaviour
 
     public void SwitchEnabledRemoveMode()
     {
-        if (!enabled)
-        {
-            enabled = true;
-            _gameInput.Enable();
-            _removeButtonText.text = "Cancel";
-        }
-        else
+        if (enabled)
         {
             enabled = false;
             _gameInput.Disable();
             _removeButtonText.text = "Remove";
+        }
+        else
+        {
+            enabled = true;
+            _gameInput.Enable();
+            _removeButtonText.text = "Cancel";
+            if (BuildingManager.Instance.enabled)
+            {
+                BuildingManager.Instance.SwitchEnabledPlaceMode();
+            }
         }
     }
     

@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3992917673794611283}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 32, y: 0, z: 25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5527abf710eb36c438a936e4db3c2b64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: Tower
   SizeOnGrid: {x: 1, y: 1}
   _renderer: {fileID: 5096259910320439503}
 --- !u!1001 &5110119532719324405

@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 
 public class Building : MonoBehaviour
 {
+    public string Name;
     public Vector2Int SizeOnGrid;
     [SerializeField] private Renderer _renderer;
     private Color _defaultColor;
